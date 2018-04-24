@@ -20,25 +20,21 @@ public class SubmitSparkJob {
     private static void submitJob() throws Exception {
         logger.info("Starting submitJob");
         SparkLauncher sparkLauncher = new SparkLauncher()
-                .setVerbose(true)
-                .setJavaHome(CommonConstants.JAVA_HOME)
                 .setSparkHome(CommonConstants.SPARK_HOME)
                 .setAppResource(CommonConstants.FIRST_JOB_PATH)
                 .setMainClass(CommonConstants.MAIN_CLASS_FIRST_JOB)
-                .setMaster(CommonConstants.MASTER_NAME)
-                .setConf(SparkLauncher.DRIVER_MEMORY, CommonConstants.DRIVER_MEMORY_FIRST_JOB)
-                .addAppArgs(CommonConstants.FIRST_JOB_ARGUMENTS);
+                .setMaster(CommonConstants.MASTER_NAME);
 
         logger.info("Launching the spark application");
         Process process = sparkLauncher.launch();
 
         InputStreamReaderRunnable inputStreamReaderRunnable = new InputStreamReaderRunnable(process.getInputStream(), "input");
-        Thread inputThread = new Thread(inputStreamReaderRunnable, "input data");
+        Thread inputThread = new Thread(inputStreamReaderRunnable, "LogStreamReader input");
         inputThread.start();
 
 
         InputStreamReaderRunnable errorStreamReaderRunnable = new InputStreamReaderRunnable(process.getErrorStream(), "error");
-        Thread errorThread = new Thread(errorStreamReaderRunnable, "error data");
+        Thread errorThread = new Thread(errorStreamReaderRunnable, "LogStreamReader input");
         errorThread.start();
 
         logger.info("Spark Application launched successfully. Waiting for exit code.");

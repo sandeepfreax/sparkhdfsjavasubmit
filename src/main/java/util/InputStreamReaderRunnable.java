@@ -21,6 +21,7 @@ public class InputStreamReaderRunnable implements Runnable {
 
     public void run(){
         try {
+            logger.info("Input Stream : " + name);
             String line = bufferedReader.readLine();
             while (line != null){
                 logger.info(line);
