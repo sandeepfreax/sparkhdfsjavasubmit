@@ -30,7 +30,7 @@ public class InputStreamReaderRunnable implements Runnable {
         }catch (Exception e){
             logger.error("run() failed for name : " + name, e);
         }finally {
-            InputOutputUtil.close(bufferedReader);
+            InputOutputUtil.closeBufferReader(bufferedReader);
         }
     }
 }

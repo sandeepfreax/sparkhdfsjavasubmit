@@ -16,7 +16,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>jobs.SubmitSparkJob</mainClass>
+                            <mainClass>jobs.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
