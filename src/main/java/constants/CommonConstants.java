@@ -15,4 +15,7 @@ public class CommonConstants {
 
     public static final String PATH_TO_MONITOR_FIRST = "/testJars";
     public static final String PATH_TO_CONFIG_FILE = "/data/config/sparkSubmitJava.conf";
+
+    public static final String SOURCE_FOLDER_JOB_ONE = "hdfs://localhost:9000/upwork/sparkJobSubmit/sourceDir/";
+    public static final String DESTINATION_FOLDER_JOB_ONE = "hdfs://localhost:9000/upwork/sparkJobSubmit/targetDir/";
 }
