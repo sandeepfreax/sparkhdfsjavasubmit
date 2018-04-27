@@ -15,23 +15,28 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
 
+/**
+ * This class will faciliate with different utilities that interact with HDFS
+ * */
 public class FileOperation {
 
     private static Logger logger = Logger.getLogger(FileOperation.class);
 
-    public void checkAndSubmitJob(String dirToMonitor,
+    /*
+    * This method check the size of a directory at configured time interval. If it finds size upto a configured size,
+    * it will trigger a Spark job, if threshold for folder size is not met then it will wait for certian time and
+    * then submits Spark Job on cluster
+    * */
+    public void checkAndSubmitJob(FileSystem fileSystem,
+                                  String dirToMonitor,
                                   String sparkJarPath,
-                                  String sparkJarMainClass,
-                                  String srcDir,
-                                  String targetDir) {
+                                  String sparkJarMainClass) {
 
-        logger.info("Starting thread to monitor changes in dir : " +
-                CommonConstants.PATH_TO_MONITOR_FIRST);
+        logger.info("Starting thread to monitor changes in dir : " + dirToMonitor);
         InputStream inputStream = null;
 
         try{
-            FileSystem fileSystem = FileSystem.get(ConfigurationManager.getConfiguration());
-            Path dirName = new Path(CommonConstants.PATH_TO_MONITOR_FIRST);
+            Path dirName = new Path(dirToMonitor);
 
             Path configFilePath = new Path(CommonConstants.PATH_TO_CONFIG_FILE);
             inputStream = fileSystem.open(configFilePath);
@@ -52,10 +57,9 @@ public class FileOperation {
 
             while (flag) {
                 dirSize = fileSystem.getContentSummary(dirName).getLength()/Math.pow(2, 30);
-                logger.info("Size of dir " + CommonConstants.PATH_TO_MONITOR_FIRST + " : " + dirSize + " GB.");
+                logger.info("Size of dir " + dirToMonitor + " : " + dirSize + " GB.");
                 if(dirSize >= thresholdDirSize || step == stepThreshold){
                     SubmitSparkJob.submitJob(sparkJarPath, sparkJarMainClass);
-                    moveFilesSourceToDestination(fileSystem, srcDir, targetDir);
                     step = 0;
                     flag = false;           //comment this code to run it for infinite loop
                 }else {
@@ -71,6 +75,9 @@ public class FileOperation {
         }
     }
 
+    /*
+    * This method moves all the files from one folder to another on HDFS.
+    * */
     public void moveFilesSourceToDestination(FileSystem fileSystem,
                                              String sourceDir,
                                              String targetDir) throws IOException{
