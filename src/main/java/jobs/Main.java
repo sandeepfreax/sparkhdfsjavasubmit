@@ -31,6 +31,8 @@ public class Main {
             String sourceFolderJobOne = configMap.get(CommonConstants.SOURCE_FOLDER_JOB_ONE);
             String destinationFolderJobOne = configMap.get(CommonConstants.DESTINATION_FOLDER_JOB_ONE);
             String firstJobMasterName = configMap.get(CommonConstants.FIRST_JOB_MASTER_NAME);
+            String infoLogDirFirstJob = configMap.get(CommonConstants.INFO_LOG_DIR_FIRST_JOB);
+            String errorLogDirFirstJob = configMap.get(CommonConstants.ERROR_LOG_DIR_FIRST_JOB);
 
             FileOperationRunnable fileOperationRunnable = new FileOperationRunnable(fileSystem,
                     sparkHome,
@@ -42,26 +44,12 @@ public class Main {
                     thresholdTimeLimitMinFirstJob,
                     sleepIntervalSecondsFirstJob,
                     sourceFolderJobOne,
-                    destinationFolderJobOne);
+                    destinationFolderJobOne,
+                    infoLogDirFirstJob,
+                    errorLogDirFirstJob);
 
             Thread firstJob = new Thread(fileOperationRunnable);
             firstJob.start();
-
-            FileOperationRunnable fileOperationRunnable1 = new FileOperationRunnable(fileSystem,
-                    sparkHome,
-                    pathToMonitorFirst,
-                    firstJobPath,
-                    firstJobMainClass,
-                    firstJobMasterName,
-                    thresholdDirSizeFirstJob,
-                    thresholdTimeLimitMinFirstJob,
-                    sleepIntervalSecondsFirstJob,
-                    sourceFolderJobOne,
-                    destinationFolderJobOne);
-
-            Thread secondJob = new Thread(fileOperationRunnable1);
-            secondJob.start();
-
         }else {
             logger.info("Insufficient no. of arguments passed to invoke the application. Please pass path for configuration file.");
         }

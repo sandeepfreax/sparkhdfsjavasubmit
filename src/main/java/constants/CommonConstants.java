@@ -12,4 +12,6 @@ public class CommonConstants {
     public static final String THRESHOLD_DIR_SIZE_GB_FIRST_JOB = "THRESHOLD_DIR_SIZE_GB_FIRST_JOB";
     public static final String THRESHOLD_TIME_LIMIT_MIN_FIRST_JOB = "THRESHOLD_TIME_LIMIT_MIN_FIRST_JOB";
     public static final String SLEEP_INTERVAL_SEC_FIRST_JOB = "SLEEP_INTERVAL_SEC_FIRST_JOB";
+    public static final String INFO_LOG_DIR_FIRST_JOB = "INFO_LOG_DIR_FIRST_JOB";
+    public static final String ERROR_LOG_DIR_FIRST_JOB = "ERROR_LOG_DIR_FIRST_JOB";
 }

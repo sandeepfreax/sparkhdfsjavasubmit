@@ -1,5 +1,6 @@
 package util;
 
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -29,6 +30,18 @@ public class InputOutputUtil {
         }
         catch (Exception ignore) {
             logger.error("Exception caught while closing the stream.", ignore);
+        }
+    }
+
+    public static void closeFSDataOutputStream(FSDataOutputStream fsDataOutputStream) {
+        if (fsDataOutputStream == null) {
+            return;
+        }
+        try {
+            fsDataOutputStream.close();
+        }
+        catch (Exception ignore) {
+            logger.error("Exception caught while closing the FS Data Output Stream.", ignore);
         }
     }
 }

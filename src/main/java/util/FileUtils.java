@@ -1,5 +1,6 @@
 package util;
 
+import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
@@ -31,5 +32,19 @@ public class FileUtils {
             line = bufferedReader.readLine();
         }
         return inputMap;
+    }
+
+    public static void writeContentToHdfs(FileSystem fileSystem, String path, String content) {
+        logger.info("Started writing to HDFS at : " + path);
+        FSDataOutputStream fsDataOutputStream = null;
+        try{
+            Path fsPath = new Path(path);
+            fsDataOutputStream = fileSystem.create(fsPath);
+            fsDataOutputStream.writeChars(content);
+        }catch (IOException e){
+            logger.error("Caught exception while writing to HDFS at : " + path, e);
+        } finally {
+            InputOutputUtil.closeFSDataOutputStream(fsDataOutputStream);
+        }
     }
 }

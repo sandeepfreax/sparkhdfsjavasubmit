@@ -28,6 +28,8 @@ public class FileOperationRunnable implements Runnable{
     private String targetFileDir;
     private String sparkHome;
     private String firstJobMasterName;
+    private String infoLogDir;
+    private String errorLogDir;
 
     public FileOperationRunnable(FileSystem fileSystem,
                                  String sparkHome,
@@ -39,7 +41,9 @@ public class FileOperationRunnable implements Runnable{
                                  String thresholdWaitTime,
                                  String waitingTime,
                                  String sourceFileDir,
-                                 String targetFileDir) {
+                                 String targetFileDir,
+                                 String infoLogDir,
+                                 String errorLogDir) {
         logger.info("Initialising FileOperationRunnable for : " + sparkJarMainClass);
         this.sparkHome = sparkHome;
         this.fileSystem = fileSystem;
@@ -52,6 +56,8 @@ public class FileOperationRunnable implements Runnable{
         this.waitingTime = waitingTime;
         this.sourceFileDir = sourceFileDir;
         this.targetFileDir = targetFileDir;
+        this.infoLogDir = infoLogDir;
+        this.errorLogDir = errorLogDir;
     }
 
     /*
@@ -83,7 +89,7 @@ public class FileOperationRunnable implements Runnable{
                 dirSize = fileSystem.getContentSummary(dirName).getLength()/Math.pow(2, 30);
                 logger.info("Size of dir " + dirToMonitor + " : " + dirSize + " GB.");
                 if(dirSize >= thresholdDirSize || step == stepThreshold){
-                    SubmitSparkJob.submitJob(sparkHome, firstJobMasterName, sparkJarPath, sparkJarMainClass);
+                    SubmitSparkJob.submitJob(sparkHome, firstJobMasterName, sparkJarPath, sparkJarMainClass, infoLogDir, errorLogDir, fileSystem);
                     step = 0;
                     moveFilesSourceToDestination(fileSystem, sourceFileDir, targetFileDir);
                     flag = false;           //comment this code to run it for infinite loop
