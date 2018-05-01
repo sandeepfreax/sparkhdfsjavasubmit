@@ -50,6 +50,37 @@ public class Main {
 
             Thread firstJob = new Thread(fileOperationRunnable);
             firstJob.start();
+
+
+            //get required configuration needed to run second job
+            String pathToMonitorSecond = configMap.get(CommonConstants.PATH_TO_MONITOR_FIRST);
+            String secondJobPath = configMap.get(CommonConstants.FIRST_JOB_PATH);
+            String secondJobMainClass = configMap.get(CommonConstants.FIRST_JOB_MAIN_CLASS);
+            String thresholdDirSizeSecondJob = configMap.get(CommonConstants.THRESHOLD_DIR_SIZE_GB_FIRST_JOB);
+            String thresholdTimeLimitMinSecondJob = configMap.get(CommonConstants.THRESHOLD_TIME_LIMIT_MIN_FIRST_JOB);
+            String sleepIntervalSecondsSecondJob = configMap.get(CommonConstants.SLEEP_INTERVAL_SEC_FIRST_JOB);
+            String sourceFolderJobTwo = configMap.get(CommonConstants.SOURCE_FOLDER_JOB_ONE);
+            String destinationFolderJobTwo = configMap.get(CommonConstants.DESTINATION_FOLDER_JOB_ONE);
+            String secondJobMasterName = configMap.get(CommonConstants.FIRST_JOB_MASTER_NAME);
+            String infoLogDirSecondJob = configMap.get(CommonConstants.INFO_LOG_DIR_FIRST_JOB);
+            String errorLogDirSecondJob = configMap.get(CommonConstants.ERROR_LOG_DIR_FIRST_JOB);
+
+            FileOperationRunnable fileOperationRunnableSecond = new FileOperationRunnable(fileSystem,
+                    sparkHome,
+                    pathToMonitorSecond,
+                    secondJobPath,
+                    secondJobMainClass,
+                    secondJobMasterName,
+                    thresholdDirSizeSecondJob,
+                    thresholdTimeLimitMinSecondJob,
+                    sleepIntervalSecondsSecondJob,
+                    sourceFolderJobTwo,
+                    destinationFolderJobTwo,
+                    infoLogDirSecondJob,
+                    errorLogDirSecondJob);
+
+            Thread secondJob = new Thread(fileOperationRunnableSecond);
+            secondJob.start();
         }else {
             logger.info("Insufficient no. of arguments passed to invoke the application. Please pass path for configuration file.");
         }

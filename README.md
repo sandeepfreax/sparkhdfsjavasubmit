@@ -33,5 +33,10 @@ Java class should read the files in the folder and move them to a different fold
     k. sleep_time => sleep time to check size of directory again
 3. In .conf file, all keys shall be uniue so kindly name them as per your convenience for your jobs.
 4. This .conf file also contains the spark_home that holds value for spark home
-5. Entries made in .conf shall be reflected in CommonConstants.java to avaoid any typo or to use them further in application.
+5. Entries made in .conf shall be reflected in CommonConstants.java to avoid any typo or to use them further in application.
 6. In main class, instantiate threads with corresponding values and start the threads.
+7. Prerequisite for this application is that all the paths mentioned in .conf file should exist before running the module.
+
+To run this sample application pass path of configuration file while invoking the application.
+e.g.
+hadoop jar sparkJobSubmit-1.0.0.jar jobs.Main /data/config/sparkApplication.conf
