@@ -1,7 +1,5 @@
 package util;
 
-import constants.CommonConstants;
-import constants.ConfigConstants;
 import jobs.SubmitSparkJob;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
@@ -9,28 +7,59 @@ import org.apache.hadoop.fs.FileUtil;
 import org.apache.hadoop.fs.Path;
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Map;
 
 /**
  * This class will faciliate with different utilities that interact with HDFS
  * */
-public class FileOperation {
+public class FileOperationRunnable implements Runnable{
 
-    private static Logger logger = Logger.getLogger(FileOperation.class);
+    private static Logger logger = Logger.getLogger(FileOperationRunnable.class);
+
+    private FileSystem fileSystem;
+    private String dirToMonitor;
+    private String sparkJarPath;
+    private String sparkJarMainClass;
+    private String thresholdSize;
+    private String thresholdWaitTime;
+    private String waitingTime;
+    private String sourceFileDir;
+    private String targetFileDir;
+    private String sparkHome;
+    private String firstJobMasterName;
+
+    public FileOperationRunnable(FileSystem fileSystem,
+                                 String sparkHome,
+                                 String dirToMonitor,
+                                 String sparkJarPath,
+                                 String sparkJarMainClass,
+                                 String firstJobMasterName,
+                                 String thresholdSize,
+                                 String thresholdWaitTime,
+                                 String waitingTime,
+                                 String sourceFileDir,
+                                 String targetFileDir) {
+        logger.info("Initialising FileOperationRunnable for : " + sparkJarMainClass);
+        this.sparkHome = sparkHome;
+        this.fileSystem = fileSystem;
+        this.dirToMonitor = dirToMonitor;
+        this.sparkJarPath = sparkJarPath;
+        this.sparkJarMainClass = sparkJarMainClass;
+        this.firstJobMasterName = firstJobMasterName;
+        this.thresholdSize = thresholdSize;
+        this.thresholdWaitTime = thresholdWaitTime;
+        this.waitingTime = waitingTime;
+        this.sourceFileDir = sourceFileDir;
+        this.targetFileDir = targetFileDir;
+    }
 
     /*
     * This method check the size of a directory at configured time interval. If it finds size upto a configured size,
     * it will trigger a Spark job, if threshold for folder size is not met then it will wait for certian time and
     * then submits Spark Job on cluster
     * */
-    public void checkAndSubmitJob(FileSystem fileSystem,
-                                  String dirToMonitor,
-                                  String sparkJarPath,
-                                  String sparkJarMainClass) {
+    public void run() {
 
         logger.info("Starting thread to monitor changes in dir : " + dirToMonitor);
         InputStream inputStream = null;
@@ -38,16 +67,11 @@ public class FileOperation {
         try{
             Path dirName = new Path(dirToMonitor);
 
-            Path configFilePath = new Path(CommonConstants.PATH_TO_CONFIG_FILE);
-            inputStream = fileSystem.open(configFilePath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-            Map<String, String> configMap = FileUtils.getMapFromConfigFile(br);
-
-            int thresholdDirSize =  Integer.valueOf(configMap.get(ConfigConstants.THRESHOLD_DIR_SIZE));
+            int thresholdDirSize =  Integer.valueOf(thresholdSize);
             logger.info("Threshold DIR size : " + thresholdDirSize);
-            int thresholdWaitTimeLimit = Integer.valueOf(configMap.get(ConfigConstants.THRESHOLD_TIME_LIMIT_MIN));
+            int thresholdWaitTimeLimit = Integer.valueOf(thresholdWaitTime);
             logger.info("Threshold Wait time : " + thresholdWaitTimeLimit);
-            int sleepTime = Integer.valueOf(configMap.get(ConfigConstants.SLEEP_INTERVAL_SECONDS));
+            int sleepTime = Integer.valueOf(waitingTime);
             logger.info("Sleep time : " + sleepTime);
 
             int stepThreshold = (thresholdWaitTimeLimit * 60) / sleepTime;
@@ -59,8 +83,9 @@ public class FileOperation {
                 dirSize = fileSystem.getContentSummary(dirName).getLength()/Math.pow(2, 30);
                 logger.info("Size of dir " + dirToMonitor + " : " + dirSize + " GB.");
                 if(dirSize >= thresholdDirSize || step == stepThreshold){
-                    SubmitSparkJob.submitJob(sparkJarPath, sparkJarMainClass);
+                    SubmitSparkJob.submitJob(sparkHome, firstJobMasterName, sparkJarPath, sparkJarMainClass);
                     step = 0;
+                    moveFilesSourceToDestination(fileSystem, sourceFileDir, targetFileDir);
                     flag = false;           //comment this code to run it for infinite loop
                 }else {
                     Thread.sleep(sleepTime*1000);
@@ -69,7 +94,7 @@ public class FileOperation {
             }
         }catch (Exception exception){
             logger.error("Caught exception while monitoring the changes in " +
-                    CommonConstants.PATH_TO_MONITOR_FIRST, exception);
+                    dirToMonitor, exception);
         }finally {
             InputOutputUtil.closeInputStream(inputStream);
         }
@@ -78,7 +103,7 @@ public class FileOperation {
     /*
     * This method moves all the files from one folder to another on HDFS.
     * */
-    public void moveFilesSourceToDestination(FileSystem fileSystem,
+    private void moveFilesSourceToDestination(FileSystem fileSystem,
                                              String sourceDir,
                                              String targetDir) throws IOException{
         logger.info("Source files are under : " + sourceDir);

@@ -1,21 +1,15 @@
 package constants;
 
 public class CommonConstants {
-    public static final String SPARK_HOME = "C:\\bigdata\\configFiles\\spark-2.2.0";
-    public static final String FIRST_JOB_PATH = "C:\\bigdata\\configFiles\\spark-2.2.0\\examples\\jars\\spark-examples_2.11-2.2.0.jar";
-    public static final String MAIN_CLASS_FIRST_JOB = "org.apache.spark.examples.SparkPi";
-    public static final String MASTER_NAME = "local[*]";
+    public static final String SPARK_HOME = "SPARK_HOME";
 
-    public static final String HADOOP_HOME = "C:\\bigdata\\configFiles\\hadoop-2.7.3";
-    public static final String HADOOP_CONF_DIR = HADOOP_HOME + "\\etc\\hadoop";
-    public static final String HADOOP_CONF_CORE_SITE = HADOOP_CONF_DIR + "\\core-site.xml";
-    public static final String HADOOP_CONF_HDFS_SITE = HADOOP_CONF_DIR + "\\hdfs-site.xml";
-    public static final String HADOOP_CONF_MAPRED_SITE = HADOOP_CONF_DIR + "\\mapred-site.xml";
-    public static final String HADOOP_CONF_YARN_SITE = HADOOP_CONF_DIR + "\\yarn-site.xml";
-
-    public static final String PATH_TO_MONITOR_FIRST = "/testJars";
-    public static final String PATH_TO_CONFIG_FILE = "/data/config/sparkSubmitJava.conf";
-
-    public static final String SOURCE_FOLDER_JOB_ONE = "hdfs://localhost:9000/upwork/sparkJobSubmit/sourceDir/";
-    public static final String DESTINATION_FOLDER_JOB_ONE = "hdfs://localhost:9000/upwork/sparkJobSubmit/targetDir/";
+    public static final String FIRST_JOB_PATH= "FIRST_JOB_PATH";
+    public static final String FIRST_JOB_MAIN_CLASS = "FIRST_JOB_MAIN_CLASS";
+    public static final String FIRST_JOB_MASTER_NAME = "FIRST_JOB_MASTER_NAME";
+    public static final String PATH_TO_MONITOR_FIRST = "PATH_TO_MONITOR_FIRST";
+    public static final String SOURCE_FOLDER_JOB_ONE = "SOURCE_FOLDER_JOB_ONE";
+    public static final String DESTINATION_FOLDER_JOB_ONE = "DESTINATION_FOLDER_JOB_ONE";
+    public static final String THRESHOLD_DIR_SIZE_GB_FIRST_JOB = "THRESHOLD_DIR_SIZE_GB_FIRST_JOB";
+    public static final String THRESHOLD_TIME_LIMIT_MIN_FIRST_JOB = "THRESHOLD_TIME_LIMIT_MIN_FIRST_JOB";
+    public static final String SLEEP_INTERVAL_SEC_FIRST_JOB = "SLEEP_INTERVAL_SEC_FIRST_JOB";
 }

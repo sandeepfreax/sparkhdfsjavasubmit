@@ -1,22 +1,20 @@
 package jobs;
 
-import constants.CommonConstants;
 import org.apache.log4j.Logger;
 import org.apache.spark.launcher.SparkLauncher;
-import util.FileOperation;
 import util.InputStreamReaderRunnable;
 
 public class SubmitSparkJob {
     private static final Logger logger = Logger.getLogger(SubmitSparkJob.class);
 
-    public static void submitJob(String jobPath, String mainClass) throws Exception {
+    public static void submitJob(String sparkHome, String masterName, String jobPath, String mainClass) throws Exception {
 
         logger.info("Starting submitJob for jar : " + jobPath + " with main class " + mainClass);
         SparkLauncher sparkLauncher = new SparkLauncher()
-                .setSparkHome(CommonConstants.SPARK_HOME)
+                .setSparkHome(sparkHome)
                 .setAppResource(jobPath)
                 .setMainClass(mainClass)
-                .setMaster(CommonConstants.MASTER_NAME);
+                .setMaster(masterName);
 
         logger.info("Launching the spark application");
         Process process = sparkLauncher.launch();
