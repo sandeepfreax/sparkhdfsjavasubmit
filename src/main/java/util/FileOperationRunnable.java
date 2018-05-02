@@ -89,9 +89,20 @@ public class FileOperationRunnable implements Runnable{
                 dirSize = fileSystem.getContentSummary(dirName).getLength()/Math.pow(2, 30);
                 logger.info("Size of dir " + dirToMonitor + " : " + dirSize + " GB.");
                 if(dirSize >= thresholdDirSize || step == stepThreshold){
-                    SubmitSparkJob.submitJob(sparkHome, firstJobMasterName, sparkJarPath, sparkJarMainClass, infoLogDir, errorLogDir, fileSystem);
+                    int jobStatus = SubmitSparkJob.submitJob(sparkHome,
+                            firstJobMasterName,
+                            sparkJarPath,
+                            sparkJarMainClass,
+                            infoLogDir,
+                            errorLogDir,
+                            fileSystem);
+                    if(jobStatus == 0)
+                    {
+                        moveFilesSourceToDestination(fileSystem, sourceFileDir, targetFileDir);
+                    } else {
+                        logger.info("Spark job failed. So could not move the files from source to directory.");
+                    }
                     step = 0;
-                    moveFilesSourceToDestination(fileSystem, sourceFileDir, targetFileDir);
                     flag = false;           //comment this code to run it for infinite loop
                 }else {
                     Thread.sleep(sleepTime*1000);

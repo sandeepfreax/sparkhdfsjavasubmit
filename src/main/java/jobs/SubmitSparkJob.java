@@ -8,7 +8,7 @@ import util.InputStreamReaderRunnable;
 public class SubmitSparkJob {
     private static final Logger logger = Logger.getLogger(SubmitSparkJob.class);
 
-    public static void submitJob(String sparkHome,
+    public static int submitJob(String sparkHome,
                                  String masterName,
                                  String jobPath,
                                  String mainClass,
@@ -44,5 +44,6 @@ public class SubmitSparkJob {
         logger.info("Spark Application launched successfully. Waiting for exit code.");
         int exitCode = process.waitFor();
         logger.info("Job finished with exit status : " + exitCode);
+        return exitCode;
     }
 }
